@@ -28,7 +28,7 @@ class AddDlMarriagePanStatusColumnToInterviews extends Migration
     public function down()
     {
         Schema::table('interviews', function (Blueprint $table) {
-             $table->enum('candidate_marriage_status',['Yes','No'])->nullable();
+            $table->enum('candidate_marriage_status',['Yes','No'])->nullable();
             $table->enum('candidate_have_DL_status',['Yes','No'])->nullable();
             $table->enum('candidate_have_PAN_status',['Yes','No'])->nullable();
         });

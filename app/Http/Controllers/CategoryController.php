@@ -20,7 +20,7 @@ class CategoryController extends Controller
     public function index()
     {
        
-        $department_data=Category::with('user')->get();
+        $department_data=Category::with('user')->orderBy('id','desc')->get();
         // dd($department_data);
         $items=User::all();
         // dd($items);

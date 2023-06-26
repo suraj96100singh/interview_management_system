@@ -1,7 +1,6 @@
-@extends('layouts.app')
 
 @section('content')
-@include('header.head')
+@extends('layouts.app');
 
 {{-- ------------------------ --}}
 {{-- practical --}}
@@ -40,7 +39,7 @@
                                                 <ul id="savefrom_list"></ul>
                                                     <label for="Department_Name"><b>Department Name</b></label>
                                                     <span class="text-danger">*</span>
-                                                    <input class="form-control rounded-pill {{$errors->any() && $errors->first('Department_Name')?'is-invalid':''}}" value="{{old('Department_Name')}}" id="edit_Department_Name" type="text" name="Department_Name" placeholder="Enter Department Name" required  @if(count($errors)>0) <script type="text/javascript">$('#departmentModal').modal('show');</script> @endif>
+                                                    <input class="form-control rounded-pill {{$errors->any() && $errors->first('Department_Name')?'is-invalid':''}}" value="{{old('Department_Name')}}" id="edit_Department_Name" type="text" name="Department_Name" placeholder="Enter Department Name" required onkeypress='return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode == 32))'>
                                                     @if($errors->any())
                                                     <p class="invalid-feedback">{{$errors->first('Department_Name')}}</p>
                                                     @endif
@@ -75,7 +74,7 @@
                                                 <div class="form-group">
                                                   <label for="Department_Phone_Number"><b>Phone Number</b></label>
                                                   <span class="text-danger">*</span>
-                                                  <input class="form-control rounded-pill {{$errors->any() && $errors->first('Department_Phone_Number')?'is-invalid':''}}" value="{{old('Department_Phone_Number')}}" id="edit_Department_Phone_Number" type="text" name="Department_Phone_Number" placeholder="Enter phone Number" required>
+                                                  <input class="form-control rounded-pill {{$errors->any() && $errors->first('Department_Phone_Number')?'is-invalid':''}}" value="{{old('Department_Phone_Number')}}" id="edit_Department_Phone_Number" type="number" name="Department_Phone_Number" placeholder="Enter phone Number" required>
                                                   @if($errors->any())
                                                   <p class="invalid-feedback">{{$errors->first('Department_Phone_Number')}}</p>
                                                   @endif
@@ -107,7 +106,7 @@
                                                   <label for="check1" ><b>Department Status</b></label>
                                                   <div class="form-control rounded-pill {{$errors->any() && $errors->first('Department_Status')?'is-invalid':''}}" >
                                                   <label for="edit_check1">Active</label>
-                                                      <input type="radio" name='Department_Status' id="edit_check1" value="Active" >
+                                                      <input type="radio" name='Department_Status' id="edit_check1" value="Active" required>
                                                   <label for="Edit_check2">Inactive</label>
                                                       <input type="radio" name='Department_Status' value="Inactive" id="edit_check2">
                                                       
@@ -179,8 +178,8 @@
 
 
 {{-- -------------index form------------------------------------------------- --}}
-<div class="container-fluid mt-2">
-    <div class="alert alert-primary h4">
+<div class="container-fluid">
+    <div class="alert alert-primary h4 ">
       Department Records
         
         {{-- <div style="text-align:right"> --}}
@@ -206,9 +205,9 @@
     {{-- ----------------------------------- --}}
 
 
-<div class="table-responsive" style="height:800px">
-    <table class="table table-dark table-striped">
-        <thead class="sticky-top table-dark">
+<div class="table-responsive">
+    <table class="table table-striped table-success table-hover tbl">
+        <thead class="bg-dark text-white">
           
         <tr>
             <th>S.No</th>
@@ -222,11 +221,12 @@
             <th>Shift End Time</th>
             <th>Department Image</th>
             <th>Department Status</th>
-            <th colspan="2" class="text-center">Action</th>
+            <th  class="text-center">Edit</th>
+            <th  class="text-center">delete</th>
         </tr>
         
     </thead>
-    <tbody>
+    <tbody class="table-hover">
     @if(count($department_data)>0)
       {{-- @dd(count($department_data)) --}}
 
@@ -259,19 +259,19 @@
             </form> 
         
             
-            <td>
+            <td style="width:0px">
                 {{-- <a href="{{ url('categories/'.$department_val->id.'/edit') }}" class="btn btn-primary" data-toggle="modal" data-target="#editdepartmentModal" >Edit</a> --}}
                
-                <button value="{{ $department_val->id }}" class="edit" data-toggle="modal" data-target="#departmentModal" onclick="changeButton({{ $department_val->id }})" ><i class="fas fa-edit" ></i></button>
+                <button value="{{ $department_val->id }}" class="edit custom-button-edit" data-toggle="modal" data-target="#departmentModal" onclick="changeButton({{ $department_val->id }})" ><i class="fas fa-edit fa-lg"></i></button>
                 {{-- <button value="{{ $department_val->id }}" class="btn btn-primary edit" >Edit</button> --}}
                
                 
             </td>
-            <td>
+            <td style="width:0px">
                 <form action="{{ route('categories.destroy',$department_val->id) }}" class="form" method="post">
                     @csrf
                     @method('DELETE')
-                   <button type="submit"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                   <button type="submit" class="custom-button"><i class="fa fa-trash fa-lg" aria-hidden="true"></i></button>
                 </form>
             </td>
             

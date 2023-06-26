@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-@include('header.head');
+
  {{-- -------------------------session alerts---- --}}
  @if(Session::has('msg'))
  <div class="col-md-12 ">
@@ -132,6 +132,7 @@
                     </div>";
                 $('#option_div_0').append(htm);
             }
+            
             $('#add_more').append("<div class='d-inline'><a class='extra-fields-customer btn btn-primary mt-3' href='#'' onclick='add_inputs("+count+")'>Add More</a></div>")
             $('#form1').attr('action','questions/'+edit_res.question_option.id);
         }
@@ -203,6 +204,7 @@ function showdata(id){
             }
             question+="</ol>";
         $('#list_data').append(question);
+        $("html, body").animate({ scrollTop: 0 }, 600);
     
         },            
     });

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-@include('header.head')
+
 <div class="container-fluid">
   <div class="row justify-content-center">
     <div class="col-md-8">
@@ -35,10 +35,8 @@
                                   <p class="invalid-feedback">{{$errors->first('department')}}</p>
                                   @endif
                                   <option value="">--Select Any User--</option>
-                                 
-                              
                                   @foreach ($department as $departments)
-                                  <option value="{{ $departments->id }}" @if(isset($user))@if($departments->id==$user->department->id)  selected @else value="{{ $departments->id }}" @endif @endif>{{ $departments->department_name }}</option>
+                                  <option value="{{ $departments->id }}"{{ (old("department") == $departments->id ? "selected":"") }} @if(isset($user))@if($departments->id==$user->department->id)  selected    @else value="{{ $departments->id }}" @endif   @endif > {{ $departments->department_name }}</option>
                                   @endforeach
                                   
                                 </select>
@@ -54,10 +52,10 @@
                                   @if($errors->any())
                                   <p class="invalid-feedback">{{$errors->first('user_roles')}}</p>
                                   @endif
-                                  <option value="">--Select Any User--</option>
+                                  <option value="" >--Select Any User--</option>
                               
                                   @foreach ($roles as $role_data)
-                                  <option value="{{ $role_data->id }}" @if(isset($user))  @if($role_data->id==$user->roles->id) selected @else   value="{{ $departments->id }}"  @endif @endif>{{ $role_data->roles_name }}</option>
+                                  <option value="{{ $role_data->id }}" {{ (old("user_roles") == $role_data->id ? "selected":"") }} @if(isset($user))  @if($role_data->id==$user->roles->id) selected @else   value="{{ $departments->id }}"  @endif @endif>{{ $role_data->roles_name }}</option>
                                   @endforeach
                                   
                                 </select>
@@ -69,7 +67,7 @@
                               <div class="form-group" @if (isset($user)) style="display: none" @else style="display:block" @endif>
                                 <label for="user_email"><b>Email</b></label>
                                 <span class="text-danger">*</span>
-                                <input class="form-control rounded-pill {{$errors->any() && $errors->first('user_email')?'is-invalid':''}}" value="{{old('user_name')}}" id="user_email" type="email" @if(isset($user))  @else name="user_email" @endif placeholder="Enter Email">
+                                <input class="form-control rounded-pill {{$errors->any() && $errors->first('user_email')?'is-invalid':''}}" value="{{old('user_email')}}" id="user_email" type="email" @if(isset($user))  @else name="user_email" @endif placeholder="Enter Email">
                                 @if($errors->any())
                                   <p class="invalid-feedback">{{$errors->first('user_email')}}</p>
                                   @endif
@@ -87,7 +85,7 @@
                               <div class="form-group">
                                 <label for="user_phone_number"><b>Phone Number</b></label>
                                 <span class="text-danger">*</span>
-                                <input class="form-control rounded-pill {{$errors->any() && $errors->first('user_phone_number')?'is-invalid':''}}" @if(isset($user)) value="{{$user->system_user_phone}}"  @else value="{{old('user_name')}}" @endif id="user_phone_number" type="text" name="user_phone_number" placeholder="Enter phone Number">
+                                <input class="form-control rounded-pill {{$errors->any() && $errors->first('user_phone_number')?'is-invalid':''}}" @if(isset($user)) value="{{$user->system_user_phone}}"  @else value="{{old('user_phone_number')}}" @endif id="user_phone_number" type="number" name="user_phone_number" placeholder="Enter phone Number">
                                 @if($errors->any())
                                 <p class="invalid-feedback">{{$errors->first('user_phone_number')}}</p>
                                 @endif
@@ -101,7 +99,7 @@
                                 <label for="user_experience"><b>Experience</b></label>
                                 <span class="text-danger">*</span>
                                 {{-- @dd($user) --}}
-                                <input class="form-control rounded-pill {{$errors->any() && $errors->first('user_experience')?'is-invalid':''}}" @if(isset($user)) value="{{$user->experience}}"  @else value="{{old('user_name')}}" @endif id="user_experience" type="text"  name="user_experience" placeholder="YY.MM">
+                                <input class="form-control rounded-pill {{$errors->any() && $errors->first('user_experience')?'is-invalid':''}}" @if(isset($user)) value="{{$user->experience}}"  @else value="{{old('user_experience')}}" @endif id="user_experience" type="text"  name="user_experience" placeholder="YY.MM">
                                 @if($errors->any())
                                 <p class="invalid-feedback">{{$errors->first('user_experience')}}</p>
                                 @endif

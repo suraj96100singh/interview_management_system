@@ -41,16 +41,19 @@ class User extends Authenticatable
     public function roles(){
        
         // return $this->hasOne(User::class);
-        return $this->hasOne(Roles::class,'id','roles_id');
+        return $this->hasOne(Roles::class,'id','roles_id');               /**Belongs to */
         // return $this->hasOne(User::class,'id','head_of_department');
     
     }
     public function department(){
        
         // return $this->hasOne(User::class);
-        return $this->hasOne(Category::class,'id','department_id');
+        return $this->hasOne(Category::class,'id','department_id');  /**Belongs to */
         // return $this->hasOne(User::class,'id','head_of_department');
     
     }
+
+
+    
     
 }

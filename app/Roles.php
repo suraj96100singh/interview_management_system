@@ -10,5 +10,5 @@ class Roles extends Model
     protected $guarded='id';
 
 
-   
+   /**apply has many */
 }

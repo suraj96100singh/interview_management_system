@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Interviews;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +24,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $interview=Interviews::all();
+        $accepted_candidate=Interviews::where('candidate_status',"=","accept")->count();
+        $rejected_candidate=Interviews::where('candidate_status',"=","reject")->count();
+        return view('home',compact('interview','accepted_candidate','rejected_candidate'));
     }
 }

@@ -58,7 +58,26 @@ class QuestionsController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
+    //    dd($request->all());
+        // foreach ($request->questions as $question_val){
+            
+        //     $question_tbl=new Questions();
+        //     $question_tbl->Question=$question_val;
+        //     $question_tbl->department_id=$request->selected_department;
+        //     if($question_tbl->save()){
+        //         foreach($request->options as $option_val){
+        //             $option_val_length=count($option_val);
+        //             for($i=0;$i<$option_val_length;$i++){
+        //                 $options_tbl=new Options();
+        //                 $options_tbl->options=$option_val[$i];
+        //                 $options_tbl->question_id=$question_tbl->id;
+        //                 $options_tbl->save();
+        //             }
+                    
+        //         }
+        //     }
+            
+        // }
         $keys=array_keys($request->all());
         $option=preg_grep('/option/',$keys);
         $number=[];
@@ -76,7 +95,7 @@ class QuestionsController extends Controller
         $question_tbl=new Questions();
         $question_tbl->Question=$question;
         $question_tbl->department_id=$request->selected_department;
-        $correct_answer_index=0;
+        $correct_answer_index=1;
         if($question_tbl->save()){
             foreach($request['options_'.$number[$index]] as $option){
                 // dd($option);

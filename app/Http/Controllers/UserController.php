@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use App\User;
 use App\Roles;
 use App\Category;
+
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
@@ -15,9 +18,21 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users=User::all();
+        // if($request->ajax()){
+        //     $data = User::latest()->get();
+        //     return Datatables::of($data)
+        //             ->addIndexColumn()
+        //             ->addColumn('action', function($row) {   
+        //                    $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm">View</a>';
+        //                    return $btn;
+        //             })
+        //             ->rawColumns(['action'])
+        //             ->make(true);
+
+        // }
+        $users=User::with('roles')->orderBy('id','desc')->get();
         // dd($userall);
         $roles=User::with('roles')->get();
         // dd($roles);
@@ -51,24 +66,32 @@ class UserController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
+        
         $validator = Validator::make($request->all(),[
             'user_name'=>'regex:/^[\pL\s\-]+$/u|max:50',
-            // 'department'=>'required',
+            'department'=>'required',
             'user_roles'=>'required',
-            'user_email'=>'required',
+            // 'user_email'=>'required',
+            'user_email' => 'unique:users,email',
             'user_phone_number'=>'required|digits:10',
             'user_password'=>'required',
-            'user_experience'=>'required'
+            'user_experience'=>'required',
             // 'Department_Image'=>'required'
+
                    ]);
+                //    dd($validator);
                 //    dd($validator);
 // --------------------------------------------------------
         if($validator->validate()){  
             // dd($request->all());.
+            // 'password' => Hash::make($data['password']),
             $users=new User();
             $users->name=$request->user_name;
             $users->email=$request->user_email;
-            $users->password=$request->user_password;
+
+            $users->password=Hash::make($request->user_password);
+            // $users->password=$request->user_password;
+            // $users->password=$request->user_password;
             $users->department_id =$request->department;
             $users->system_user_phone=$request->user_phone_number;
             $users->ststem_user_address=$request->user_address;
@@ -81,7 +104,10 @@ class UserController extends Controller
              //db inserstion
 
              return redirect('/users')->withErrors($validator)->withInput();
+         
+        
         }
+
     }
 
     /**
@@ -125,11 +151,12 @@ class UserController extends Controller
     {
         // dd($request->all());
         $validator = Validator::make($request->all(),[
-            'user_name'=>'regex:/^[\pL\s\-]+$/u|max:50',
-            'user_roles'=>'required',
-            'user_phone_number'=>'required|digits:10',
-            'user_experience'=>'required|numeric|between:0,99.99',
+                                'user_name'=>'regex:/^[\pL\s\-]+$/u|max:50',
+                                'user_roles'=>'required',
+                                'user_phone_number'=>'required|digits:10',
+                                'user_experience'=>'required|numeric|between:0,99.99',
                    ]);
+                   
                    if($validator->validate()){
 
                     $users=User::find($id);
