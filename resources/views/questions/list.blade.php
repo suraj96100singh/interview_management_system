@@ -2,7 +2,9 @@
 @section('content')
 
 
-
+<div class="float-right import mr-2">
+    <a href="{{url('/import') }}"><button class="btn btn-primary">Upload Excel</button></a>
+</div>
 <form action="{{url('questions')}}" class="multiple_record" id="form1" method="post">
     @csrf
     <div class="form-group m-2">

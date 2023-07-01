@@ -68,3 +68,9 @@ select option {
     display: inline-block;
     font-size: 16px;
 }
+.import a {
+    color: white;
+}
+/* .main {
+    width: 50px;
+} */

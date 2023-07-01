@@ -18,7 +18,8 @@ class AddPhoneAddressRolesIdExperianceColumnnsToUsers extends Migration
             $table->longText('ststem_user_address')->nullable();
             $table->unsignedBigInteger('roles_id')->nullable();
             $table->foreign('roles_id')->references('id')->on('roles')->onDelete('cascade');
-            $table->float('experience',2,2)->nullable();
+            $table->string('experience')->nullable();
+            // $table->float('experience',2,2)->nullable();
             // $table->softDeletes();
            
         });

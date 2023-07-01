@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddColumnQuestionIdToOptions extends Migration
+class DropColumnQuestionIdToOptions extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,7 @@ class AddColumnQuestionIdToOptions extends Migration
     public function up()
     {
         Schema::table('options', function (Blueprint $table) {
-            $table->unsignedBigInteger('question_id')->nullable();
-            $table->foreign('question_id')->references('id')->on('questions');
+            Schema::dropIfExists('question_id');
         });
     }
 
@@ -27,7 +26,7 @@ class AddColumnQuestionIdToOptions extends Migration
     public function down()
     {
         Schema::table('options', function (Blueprint $table) {
-            //
+            Schema::dropIfExists('question_id');
         });
     }
 }

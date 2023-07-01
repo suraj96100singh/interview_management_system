@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
     
     {{-- jquert with sweet alert--}}
+    {{-- <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script> --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
     {{-- bootstrap cdn --}}
@@ -46,9 +47,15 @@
 
     
     
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script> --}}
     {{-- sweet alert cdn js --}}
-  
+    
+    {{-- <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=FRdLgsW7bjYl5ZtWp0g0xLmPjtdUb"></script> --}}
+    {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> --}}
+    {{-- <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&v=3&libraries=geometry"></script> --}}
+    
+    
+
   </head>
 <body id="refresh_data_one">
     

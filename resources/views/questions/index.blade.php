@@ -174,7 +174,7 @@ function remove_inputs(ids){
 //   ------show data
 
 function showdata(id){
-    console.log('hello');
+    // console.log('hello');
     document.getElementById("show_questions").style.display='block';
     $.ajax({
         type:'GET',
@@ -186,10 +186,13 @@ function showdata(id){
             if(res.all_questions.questions){
                 var question = "";
                 var index=1;
-                question+="<ol>";
+                question+=`<label class='mr-3 ml-2'><b>Select All</b></label><input type='checkbox' id='select_all_checkbox' class='select_all_checkbox'/>`
+                question+="<ol class='ml-5'>";
                 
                 res.all_questions.questions.forEach(elements => {
                     // console.log(elements);
+                    
+                    question+=`<input type='checkbox' name='selected_question' value='${elements.id}' class='selected_question mr-2'/>`
                     
                     question+='('+index+').';
                     question += "<li class='d-inline'>"+elements.Question+"</li>"+"<span  data-toggle='modal'  data-target='#questionModal' onclick='show_edit_data("+elements.id+")'> <i class='fa fa-edit ml-3' aria-hidden='true'></i>"+"</span>"+"<span  onclick='show_delete_data("+elements.id+")' data-token="+'{{ csrf_token() }}'+" id='delete_btn_"+elements.id+"'><i class='fa fa-trash ml-3' aria-hidden='true'></i>"+"</span>"
@@ -199,8 +202,10 @@ function showdata(id){
                     
                     });  
                     question+="</ol>";
+                    
                     index++
                 });  
+                question+=`<button class='btn btn-primary' onclick='multiple_question_delete()'>Delete Selected Question</button>`
             }
             question+="</ol>";
         $('#list_data').append(question);
@@ -209,15 +214,58 @@ function showdata(id){
         },            
     });
 }
+// multiple question delete start
+function multiple_question_delete(){
+    if(!confirm('Do You Really Want to Delete Selected Question')){
+        return;
+    }
+    var values = [];    
+    $( "input[name='selected_question']:checked" ).each(function(){
+        values.push($(this).val());
+    });
+    // console.log(values);
+    $.ajaxSetup({
+   headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+   }
+    });
+    $.ajax({
+        type:"Delete" ,
+        url: "questions/"+values,
+        data: {"_method":'DELETE'},
+        success: function (response) {
+            console.log(response);
+            showdata(response.department_id)
+            var value=$('#question_count_'+response.department_id).text();
+            if(value==response.id_count){
+                $('#remove_link_'+response.department_id).remove()
+                $('#show_questions').css({
+                    'display':'none'
+                });
+            }
+            $('#question_count_'+response.department_id).text(value-response.id_count);
+            $('#delete_session_div').append("<div class='alert alert-danger toggle_class' id='toggle_session'><h4 class='delete_div'></h4></div>");
+            $('.delete_div').html(response.errormsg);
+            $('#toggle_session').toggle(2000);
+            setInterval(() => {
+            $('#toggle_session').remove();
+            }, 2000);
+        }
+    });
 
+
+
+
+
+    
+}
 function show_delete_data(ids){
-    // console.log(ids);
     if(!confirm('Do You Really Want To Perform This Action')){
-        $("#delete_btn_"+ids).preventDefault();
+        return;
+        // $("#delete_btn_"+ids).preventDefault();
 
     }
     var token = $("#delete_btn_"+ids).data("token");
-    // console.log(token);
     $.ajax({
         url:'questions/'+ids,
         type:'Delete',
@@ -226,14 +274,9 @@ function show_delete_data(ids){
             "_token": token,
         },
         success:function (res) {
-        //    console.log(res);
-        // location.reload();
+            // console.log(res);
         showdata(res.department_id)
             var value=$('#question_count_'+res.department_id).text();
-            // var value=document.getElementById("question_count_"+res.department_id).innerText;
-            // console.log(value);
-            // console.log(value-1);
-            //  82
             if(value==1){
                 $('#remove_link_'+res.department_id).remove()
                 $('#show_questions').css({
@@ -247,16 +290,6 @@ function show_delete_data(ids){
             setInterval(() => {
             $('#toggle_session').remove();
             }, 2000);
-
-           
-
-
-
-
-
-
-         
-
          }
 
 

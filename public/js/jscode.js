@@ -402,6 +402,7 @@ $(function () {
             // { data: "department_id", name: "department_id" },
             { data: "candidate_email", name: "candidate_email" },
             { data: "candidate_permanent_address", name: "candidate_dob" },
+            { data: "distance_btw_office", name: "distance_btw_office" },
             {
                 data: "candidate_form_filling_date",
                 name: "candidate_form_filling_date",
@@ -478,24 +479,6 @@ $(function () {
     // });
 });
 
-// status data filter in show intervwer page experiment 2
-
-// $(function () {
-
-//     $("#status").change(function () {
-//         $.ajax({
-//             url: "/interviewers",
-//             data: { status: $("#status").val() },
-//             success: function (datares) {
-//                 console.log(datares);
-//             },
-//             columns: [{ data: "id" }, { data: "candidate_name" }],
-//         });
-//     });
-// });
-
-// expriment 1
-
 $(document).ready(function (url) {
     var url_string = window.location;
     var url = new URL(url_string);
@@ -506,6 +489,165 @@ $(document).ready(function (url) {
         document.getElementById("status").dispatchEvent(new Event("change"));
     }
 
-    // document.getElementById("status").selectedIndex = 0;
-    // document.getElementById("status").dispatchEvent(new Event("change"));
+    // geocode
+});
+
+// ----
+
+// state and city code
+var auth_token;
+function dropdown_state() {
+    $.ajax({
+        type: "GET",
+        url: "https://www.universal-tutorial.com/api/getaccesstoken",
+        success: function (data) {
+            auth_token = data.auth_token;
+            get_state(data.auth_token);
+        },
+        headers: {
+            Accept: "application/json",
+            "api-token":
+                "D-FpCSCxWG7D2BjTHw7fu6AG4NJLVdTsPy-quvPKpXt-hfNo8xwOvacZauakrYwsGvY",
+            "user-email": "monikabothra1996@gmail.com",
+        },
+    });
+}
+function get_data() {
+    get_city(false);
+}
+dropdown_state();
+function get_state(auth_token) {
+    var country_name = "India";
+    $.ajax({
+        type: "GET",
+        url: "https://www.universal-tutorial.com/api/states/" + country_name,
+        success: function (data) {
+            $("#state").empty();
+            data.forEach((element) => {
+                $("#state").append(
+                    '<option value="' +
+                        element.state_name +
+                        '">' +
+                        element.state_name +
+                        "</option>"
+                );
+            });
+        },
+        headers: {
+            Authorization: "Bearer " + auth_token,
+            Accept: "application/json",
+        },
+    });
+}
+
+function get_city(city) {
+    var state_name = $("#state").val();
+
+    // console.log(state_name);
+    $.ajax({
+        type: "GET",
+        url: "https://www.universal-tutorial.com/api/cities/" + state_name,
+        success: function (data) {
+            $("#city").empty();
+            var unique = [...new Set(data.map((item) => item.city_name))];
+            if (city) {
+                unique.forEach((element) => {
+                    $("#city")
+                        .append(
+                            '<option value="' +
+                                element +
+                                '">' +
+                                element +
+                                "</option>"
+                        )
+                        .val(city);
+                });
+            } else {
+                unique.forEach((element) => {
+                    $("#city").append(
+                        '<option value="' +
+                            element +
+                            '">' +
+                            element +
+                            "</option>"
+                    );
+                });
+            }
+        },
+        headers: {
+            Authorization: "Bearer " + auth_token,
+            Accept: "application/json",
+        },
+    });
+}
+
+// distance calculate from office to candidate address
+// radius of the given data
+var rad = function (x) {
+    return (x * Math.PI) / 180;
+};
+function getLatLongFromAddress() {
+    var address = document.getElementById("candidate_permanent_address").value;
+    var city = document.getElementById("city").value;
+    // console.log(city);
+    var state = document.getElementById("state").value;
+    var full_address = address + ", " + city + ", " + state;
+    document.getElementById("candidate_permanent_address").value = full_address;
+    var office_lat = 28.0058335;
+    var office_long = 73.3059022;
+
+    // console.log(full_address);
+
+    // console.log(state);
+    fetch(
+        `https://api.distancematrix.ai/maps/api/geocode/json?address=${full_address}&key=FRdLgsW7bjYl5ZtWp0g0xLmPjtdUb`
+    )
+        .then((response) => {
+            return response.json();
+        })
+        .then((jsonData) => {
+            // console.log(jsonData.result[0].geometry.location); // {lat: 45.425152, lng: -75.6998028}
+            $("#lat").val(jsonData.result[0].geometry.location.lat);
+            $("#long").val(jsonData.result[0].geometry.location.lng);
+
+            // experiment start
+            var R = 6378137; // Earth’s mean radius in meter
+            var destination_lat = jsonData.result[0].geometry.location.lat;
+            var distiination_long = jsonData.result[0].geometry.location.lng;
+
+            var dLat = rad(
+                office_lat - jsonData.result[0].geometry.location.lat
+            );
+            var dLong = rad(
+                office_long - jsonData.result[0].geometry.location.lng
+            );
+            var a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(rad(jsonData.result[0].geometry.location.lat)) *
+                    Math.cos(rad(office_lat)) *
+                    Math.sin(dLong / 2) *
+                    Math.sin(dLong / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            var d = (R * c) / 1000;
+
+            // console.log(d.toFixed(2));
+            $("#distance_btw_office").val(d.toFixed(2));
+
+            // experiment end
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+}
+
+// $(".select_all_checkbox").on("click", function () {
+//     alert("hello");
+// this.checked
+//     ? $(".selected_question").prop("checked", true)
+//     : $(".selected_question").prop("checked", false);
+// });
+$(document).on("click", "#select_all_checkbox", function () {
+    this.checked
+        ? $(".selected_question").prop("checked", true)
+        : $(".selected_question").prop("checked", false);
 });

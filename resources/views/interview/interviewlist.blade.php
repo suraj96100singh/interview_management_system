@@ -40,6 +40,7 @@
             <th >Department</th>
             <th >Email</th>
             <th >Address</th>
+            <th class="text-center">Distance From Office K.M</th>
             <th >Form Submit Date</th>
             <th >Total Question</th>
             <th >Correct Question</th>
@@ -107,11 +108,7 @@
                     <div id="success_message_id">
                     </div>
                     <div class="card-body" id="all_detail" class="border-1px"> 
-                    {{-- all detail will show here --}}
                     </div>
-                    {{-- <div>
-                        <button type="button" onclick="print_detail(document.getElementById('printThis'))">Print</button>
-                    </div> --}}
                 </div>
             </div>
             <div class="text-center mb-5 ">
@@ -483,14 +480,15 @@ $(document).ready(function(){ //Make script DOM ready
         //     window.top.location = window.top.location
         //     return;
         // }
-
         swal({
                 title: `Are You sure want to Reject This Candidate ?`,
-                text: "If you Proceed, it Can't Be UNDO.",
+                text: "If you Reject,Rejection mail will be send to the candidate",
+                // text:"Loading...",
                 icon: "warning",
                 buttons: true,
                 dangerMode: true,
             }).then((willProceed) => {
+                
             if (willProceed) {
                 $.ajaxSetup({
                 headers: {
@@ -498,17 +496,32 @@ $(document).ready(function(){ //Make script DOM ready
                 },
                 });
                 var token = $('meta[name="csrf-token"]').attr("content");
+                
+                swal({
+                        title:"", 
+                        text:"Sending the Mail...",
+                        icon: "https://www.boasnotas.com/img/loading2.gif",
+                        // showSpinner: true,
+                        buttons: false,      
+                        closeOnClickOutside: false, 
+                        })
                 $.ajax({
                     type: "PUT",
                     data: {employee_status : 'reject',_token:token},
                     dataType: "json",
                     url: "/interviewers/" + employee_id,
+                    // beforeSend:function(){
+                      
+                    // },
                     success: function (employee_status_res) {
+                        // Swal.fire('Please wait');
+                        swal.close(); 
                         console.log(employee_status_res);
                         // window.location.href = "/interviewers";
                         var element = document.getElementById('status');
                         var event = new Event('change');
                         element.dispatchEvent(event);
+                       
 
                     }
                 });

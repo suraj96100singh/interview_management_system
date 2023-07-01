@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddColumnDepartmentIdToOptions extends Migration
+class AddColumnDepartmentIdToQuestions extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,7 @@ class AddColumnDepartmentIdToOptions extends Migration
     {
         Schema::table('questions', function (Blueprint $table) {
             $table->unsignedBigInteger('department_id')->nullable();
-            $table->foreign('department_id')->references('id')->on('department');
+            $table->foreign('department_id')->references('id')->on('department')->onDelete('cascade');
         });
     }
 
@@ -27,7 +27,8 @@ class AddColumnDepartmentIdToOptions extends Migration
     public function down()
     {
         Schema::table('questions', function (Blueprint $table) {
-            //
+            $table->unsignedBigInteger('department_id')->nullable();
+            $table->foreign('department_id')->references('id')->on('department')->onDelete('cascade');
         });
     }
 }

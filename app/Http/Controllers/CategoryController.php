@@ -19,17 +19,18 @@ class CategoryController extends Controller
      */
     public function index()
     {
-       
+        // $collection = collect(['taylor', 'abigail',null])->map(function (string $name) {
+        //     return strtoupper($name);
+        // })->reject(function (string $name) {
+        //     return empty($name);
+        // });
+        
         $department_data=Category::with('user')->orderBy('id','desc')->get();
-        // dd($department_data);
+        
         $items=User::all();
-        // dd($items);
         // dd($department_data);
-        // $User=DB::table('users')->join('departments','users.id','head_of_department')->get();
-        // $User=DB::table('users')->join('department','users.id','head_of_department')->get();
-        // dd($items);
         return view('categories.ShowCategories',compact('department_data','items'));
-        // return view('categories.ShowCategories',compact('User','items'));
+        
         
     }
 
@@ -96,7 +97,7 @@ class CategoryController extends Controller
                 // Upload Image
                 $path = $request->file('Department_Image')->storeAs('public', $fileNameToStore);
             } else {
-                $fileNameToStore = 'noimage.png';
+                $fileNameToStore = 'no_image.png';
             }
         //         //    ------------------------dushratarika---
                 // if($validator->fails()){
@@ -214,54 +215,49 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // dd($request->all());
         if(isset($request->Department_Status_on_index)){
             $category=Category::find($id);
             $category->department_status=$request->Department_Status_on_index;
             $category->save();
             $request->session()->flash('msg','Data Updated Successfully');
             return redirect('categories');
-
-
         }else{
-
-        
             $validator = Validator::make($request->all(),[
             'Department_Name'=>'regex:/^[\pL\s\-]+$/u|max:50',
             'Department_Email'=>'required',
             'Department_Phone_Number'=>'required|digits:10'
            ]);
-        //    dd($validator);
+           $main=Category::find($id);
            if($validator->validate()){
-       
             if($request->hasFile('Department_Image')){
-                // Get filename with the extension
-                $filenameWithExt = $request->file('Department_Image')->getClientOriginalName();
-                // Get just filename
-                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-                // Get just ext
-                $extension = $request->file('Department_Image')->getClientOriginalExtension();
-                // Filename to store
-                $fileNameToStore= $filename.'_'.time().'.'.$extension;
-                // Upload Image
-                $path = $request->file('Department_Image')->storeAs('public', $fileNameToStore);
-                // dd($path);
-                // if(Storage::disk()->exists($path)){
-                //     dd("file hai ye folder main");
-                //     exit;
-                // }else{
-                //     dd('nahi file nahi hai folder main');
-                // }
                 
+                if($main->department_image=='no_image.png'){
+                $filenameWithExt = $request->file('Department_Image')->getClientOriginalName();
+                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+                $extension = $request->file('Department_Image')->getClientOriginalExtension();
+                $fileNameToStore= $filename.'_'.time().'.'.$extension;
+                $path = $request->file('Department_Image')->storeAs('public',$fileNameToStore);
+
+                }else{
+                unlink('storage/'.$main->department_image);
+                $filenameWithExt = $request->file('Department_Image')->getClientOriginalName();
+                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+                $extension = $request->file('Department_Image')->getClientOriginalExtension();
+                $fileNameToStore= $filename.'_'.time().'.'.$extension;
+                $path = $request->file('Department_Image')->storeAs('public',$fileNameToStore); 
+                // dd($path);
+
+                }
                 
             } else {
-                // dd($request->all());
-                // $fileNameToStore = 'noimage.png';
-                $fileNameToStore = $request->Department_Image;
-            }
-        // dd($request);
-        // dd($validator);
+                if($main->department_image=='no_image.png'){
+                $fileNameToStore = 'no_image.png';
+                }else{
+                    unlink('storage/'.$main->department_image);
+                    $fileNameToStore = 'no_image.png';
 
+                }
+            }
                     // --------------------------------------------------------
                     $category=Category::find($id);
                     $category->department_name=$request->Department_Name;
@@ -276,7 +272,7 @@ class CategoryController extends Controller
                     $category->department_status=$request->Department_Status;
                     $category->department_image=$fileNameToStore;
                     // dd($category);
-                    $category->save();
+                    $category->update();
                     $request->session()->flash('msg','Data Updated Successfully');
                     return redirect('categories');
            

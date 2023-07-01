@@ -8,6 +8,12 @@ use App\Options;
 
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Reader\Exception;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+// use IOFactory
 
 class QuestionsController extends Controller
 {
@@ -58,7 +64,7 @@ class QuestionsController extends Controller
      */
     public function store(Request $request)
     {
-    //    dd($request->all());
+        //    dd($request->all());
         // foreach ($request->questions as $question_val){
             
         //     $question_tbl=new Questions();
@@ -81,13 +87,11 @@ class QuestionsController extends Controller
         $keys=array_keys($request->all());
         $option=preg_grep('/option/',$keys);
         $number=[];
-        // dd($option);
         foreach($option as $newoption){
             $a=str_replace('options_','',$newoption);
             array_push($number,$a);
-            // dd($a);
         }
-      
+        // dd($number);
         $index=0; 
 
        foreach($request->question as $question){
@@ -209,18 +213,141 @@ class QuestionsController extends Controller
      */
     public function destroy($question, Request $request)
     {
-        $old_option=Options::where('question_id',$question)->delete();
+        
+        // return response()->json($question);
+        // $old_option=Options::where('question_id',$question)->delete();
         $department_id=Questions::find($question)->department_id;
-        $questions=Questions::find($question)->delete();
+        
+        $ids = explode(",", $question);
+        $idscount=count($ids);
+        // for($i=0;$i<count($ids);$i++){
+        //     $questions=Questions::where('id',$ids[$i])->delete();
+        // }
+        
+        $questions=Questions::find($ids)->each(function ($main,$key){
+            $main->delete();
+        });
         // $request->session()->flash('errormsg','Data deleted Successfully');
         return response()->json([
             'status'=>'200',
             'department_id'=>$department_id,
             'errormsg'=>'Data Deleted Successfully',
+            'question_id'=>$question,
+            'id_count'=>$idscount,
             
         ]);
         // $request->session()->flash('errormsg','Data deleted Successfully');
         //     return redirect('questions');
        
     }
+    public function importDataIndex(Request $request){
+        
+    $department=Category::all();
+        return view('questions.importExcel',compact('department'));
+    }
+
+
+
+    public function importData(Request $request){
+        $this->validate($request, [
+            'uploaded_file' => 'required|file|mimes:xls,xlsx'
+        ]);
+        $the_file = $request->file('uploaded_file');
+        try{
+            $spreadsheet = IOFactory::load($the_file->getRealPath());
+            $sheet        = $spreadsheet->getActiveSheet();
+            $row_limit    = $sheet->getHighestDataRow();
+            $column_limit = $sheet->getHighestDataColumn();
+            $row_range    = range( 2, $row_limit );
+            $column_range = range( 'C', $column_limit );
+            $startcount = 2;
+            $data = array();
+            $question=array();
+            // dd($column_range);
+
+            foreach ( $row_range as $row ) {
+                
+                $data[] = [
+                    'question' =>$sheet->getCell( 'A' . $row )->getValue(),
+                    'option' => $sheet->getCell( 'B' . $row )->getValue(),
+                    'correct_answer' => $sheet->getCell( 'C' . $row )->getValue(),
+                ];
+                $startcount++;
+            }
+            // dd($data);
+            // question show
+            $question_val=array_column($data,'question');
+            $question_unique=(array_unique($question_val));
+            $sorted_key=array_filter(array_merge( $question_unique));
+           
+
+                $question_value=[
+                    'question'=>$sorted_key
+                ];
+                // dd($question_value);
+                
+            // dd($data[0]['question']);
+            // dd($question_value);
+            // optionshow
+            $option=array();
+            $unique_question_length=count($question_value['question']);
+            $main_data_lenght=count($data);
+             $count=0;
+            for($i=0;$i<$unique_question_length;$i++){
+                for($j=0;$j<$main_data_lenght;$j++){
+                    if($question_value['question'][$i]==$data[$j]['question']){
+                        $option['option_'.$count][]=$data[$j]['option'];
+                        $correct_answer['correct_answer_'.$count][]=$data[$j]['correct_answer'];
+                    }  
+                }
+                $count++;
+                
+                
+            }
+            // below data save code   
+            $keys=array_keys($option);
+            $options=preg_grep('/option/',$keys);
+            $number=[];
+            foreach($options as $newoption){
+                $a=str_replace('option_','',$newoption);
+                array_push($number,$a);
+            }
+            $index=0; 
+           foreach($question_value as $question_partial_val){
+            foreach($question_partial_val as $question_last_value){
+                $question_tbl=new Questions();
+                $question_tbl->Question=$question_last_value;
+                $question_tbl->department_id=$request->selected_department;
+                
+                if($question_tbl->save())
+                {
+
+                        foreach($option['option_'.$number[$index]] as $key=>$option_val){
+                            $options_tbl=new Options();
+                            $options_tbl->options=$option_val;
+                            $options_tbl->question_id=$question_tbl->id;
+                            if($correct_answer['correct_answer_'.$number[$index]][$key]=="yes"){
+                                $options_tbl->right_answer=1;
+
+                            }else{
+                                $options_tbl->right_answer=0;
+                              
+
+                            }
+                            $options_tbl->save(); 
+                        }
+            }
+            $index++;
+            }
+           }
+           $request->session()->flash('msg','Data Added Successfully');
+           return redirect('questions');
+        } catch (Exception $e) {
+            return back()->withErrors('There was a problem uploading the data!');
+        }
+        return back()->withSuccess('Great! Data has been successfully uploaded.');
+    }
+
+    
+    
 }

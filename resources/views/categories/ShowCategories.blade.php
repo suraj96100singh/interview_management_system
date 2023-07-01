@@ -245,16 +245,16 @@
             <td>{{ $department_val->department_working_hours }}</td>
             <td>{{ $department_val->shift_start_time?$department_val->shift_start_time:'N/A' }}</td>
             <td>{{ $department_val->shift_end_time }}</td>
+            {{-- @dd($department_val->department_image); --}}
             
-            
-            <td> <img src="{{ url('storage/'.$department_val->department_image) }}" alt="" style="border-radius: 50%; width: 50px" loading="lazy"> </td>
+            <td> <img src="{{ asset('storage/'.$department_val->department_image) }}" alt="" style="border-radius: 50%; width: 50px" loading="lazy"> </td>
             
             {{-- <form action="{{ url('categories//changestatus'$department_val->id) }}" method="post"> --}}
             <form action="categories/{{ $department_val->id }}" method="post">
                 @csrf
                 @method('PUT')
                 
-                 <td><button type="submit" @if($department_val->department_status=='Active')class="btn btn-success status" value="Inactive" @else class="btn btn-warning status" value="Active" @endif name="Department_Status_on_index" id="{{ $department_val->id }}" onclick="button({{ $department_val->id}})">{{ $department_val->department_status }}</button></td>
+                 <td><button type="submit" @if($department_val->department_status=='Active')class="btn btn-success status" value="Inactive" @else class="btn btn-warning status" value="Active" @endif name="Department_Status_on_index" id="{{ $department_val->id }}">{{ $department_val->department_status }}</button></td>
                 
             </form> 
         
@@ -413,9 +413,9 @@ function refresh(){
     document.getElementById("edit_shift_start_time").value="";
     document.getElementById("edit_shift_end_time").value="";
     document.getElementById("edit_Department_Working_Hours").value="";
-    document.getElementById("edit_Department_Image").value="";
+    // document.getElementById("edit_Department_Image").value="";
     document.getElementById("edit_hod").value="";
-    document.getElementById("department_image").value="";
+    // document.getElementById("department_image").value="";
     
     // document.getElementById("#select_any_one").value="Select any One";
 

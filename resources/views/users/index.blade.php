@@ -21,7 +21,7 @@
         @endif
     {{-- ----------------------------------- --}}
 <div class="table-responsive">
-    <table class="table table-striped table-success table-hover tbl">
+    <table class="table table-striped table-success table-hover">
         <thead class="bg-dark text-white">
           
         <tr>
@@ -48,7 +48,7 @@
             <td>{{ $users_val->email}}</td>
             <td>{{ $users_val->system_user_phone}}</td>
             <td>{{ $users_val->ststem_user_address}}</td>
-            <td>{{ $users_val->roles_name}}</td>
+            <td>{{ $users_val->roles->roles_name}}</td>
             <td>{{ $users_val->department->department_name??'N/A'}}</td>
             <td>{{ $users_val->experience}}</td>
             <td style="width:1px">

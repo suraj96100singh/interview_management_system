@@ -72,20 +72,32 @@
                             class="ml-3">
                     </div>
                     <div class="form-group mt-4 ml-2">
-                        <label for="">
-                            <h5>Permanent Address</h5>
+                        <label for="state" class=""><h5>State</h5></label>
+                        <select id="state"  onchange="get_data()" class="form-control ml-5">
+                            <option value="" >--Select State--</option>
+                        </select>
+                            <label for="city" class="ml-5"><h5>City</h5></label>
+                            <select  id="city" class="form-control ml-5">
+                            <option value="">--Select City--</option>
+                            </select>
+                        <label for="" class="ml-5">
+                            <h5>Address</h5>
                         </label>
-                        <textarea name="candidate_permanent_address"  id="candidate_permanent_address" cols="97" rows="" class="form-control  ml-3 "></textarea>
-                        {{-- <p class="text-danger" style="display:none" id="candidatePAdd"></p> --}}
-
+                        {{-- <textarea name="candidate_permanent_address"  id="candidate_permanent_address" cols="97" rows="" class="form-control  ml-3 "></textarea> --}}
+                        <input type="text" name="candidate_permanent_address" id="candidate_permanent_address" class="form-control  ml-3" placeholder="Enter Address" onchange="getLatLongFromAddress()" value="">                        
+                        <input type="hidden" name="lat" id="lat" placeholder="lat">
+                        <input type="hidden" name="long" id="long" placeholder="long">
+                        <input type="hidden" name="distance_btw_office" id="distance_btw_office" placeholder="long">
+                        
                     </div>
-                    <div class="form-group mt-5 ml-2">
+
+                    {{-- <div class="form-group mt-5 ml-2">
                         <label for="">
                             <h5>Current Address</h5>
                         </label>
                         <textarea name="candidate_current_address" id="candidate_current_address" cols="97" rows="" class="form-control ml-5"></textarea>
 
-                    </div>
+                    </div> --}}
 
                 </div>
                 <div>
@@ -668,6 +680,17 @@
                 tr_id--;
                 $('#addrelative_' + tr_id).remove();
             })
+            // get address from geocodder
+
+            // var autocomplete;
+            // var to='candidate_permanent_address';
+            // autocomplete =new google.maps.places.Autocomplete((document.getElementById(to)),{
+            //     types:['geocode']
+                // console.log(autocomplete);
+            // })
+            // console.log(autocomplete);
+           
+
         })
         //   marriage status check
         function marriage_status_changes(clss_id) {
@@ -723,4 +746,8 @@
             </div>
         </div>
     </div> --}}
+
+    {{-- ---- --}}
+
+
 @endsection

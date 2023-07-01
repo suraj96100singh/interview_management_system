@@ -128,6 +128,7 @@ class InterviewsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function interviewValidate(Request $request){
+        // dd($request->all());
         // $rules=array('candidate_name' => 'required',
         //             'candidate_dob' => 'required',
         //             'candidate_number' => 'required',
@@ -265,6 +266,9 @@ if ($request->name) {
     $interviews->candidate_form_filling_date=$request->date;
     $interviews->earlier_tour=$request->earlier_tour;
     $interviews->department_id=$request->department_id;
+    $interviews->address_latitude=$request->lat;
+    $interviews->address_longitude=$request->long;
+    $interviews->distance_btw_office=$request->distance_btw_office;
     // dd($interviews->candidate_marriage_status);
     // dd($request->all());
         // $get_signature=$request->signature;
@@ -456,6 +460,15 @@ if ($request->name) {
 
         }else{
             // return response()->json(['success' => "else vale main aa gya"], 200);
+            $data['name']=$interviewer->candidate_name;
+            $data["title"] = "Mahesh suppliers (india) Pvt. Ltd.";
+            $data["email"] = $interviewer->candidate_email;
+            Mail::send('emails.rejection', $data, function($message)use($data) {
+                $message->to($data["email"])
+                        ->subject('Your job application for Mahesh suppliers Pvt. Ltd.');
+                        // ->attachData($pdf->output(), "offer_latter.pdf");
+                       
+            });
             $interviewer->candidate_status='reject';
             $interviewer->save();
             return response()->json(['success' => true], 200);
@@ -496,8 +509,8 @@ if ($request->name) {
                 $count++;
             }
         }
-        $interview_candidate->total_correct_question=config('app.total_question');
-        $interview_candidate->total_question=$total_question;
+        $interview_candidate->total_correct_question=$count;
+        $interview_candidate->total_question=config('app.total_question');
         $interview_candidate->save();
         return view('interview/interviewdone');
 

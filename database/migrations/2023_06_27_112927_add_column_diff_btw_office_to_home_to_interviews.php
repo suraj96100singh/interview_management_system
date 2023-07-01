@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddColumnCorrectAnswerToQuestion extends Migration
+class AddColumnDiffBtwOfficeToHomeToInterviews extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class AddColumnCorrectAnswerToQuestion extends Migration
      */
     public function up()
     {
-        Schema::table('questions', function (Blueprint $table) {
-            $table->unsignedBigInteger('correct_answer')->nullable();
-            $table->foreign('correct_answer')->references('id')->on('options');
+        Schema::table('interviews', function (Blueprint $table) {
+            $table->string('distance_btw_office')->nullable();
         });
     }
 
@@ -26,8 +25,8 @@ class AddColumnCorrectAnswerToQuestion extends Migration
      */
     public function down()
     {
-        Schema::table('question', function (Blueprint $table) {
-            //
+        Schema::table('interviews', function (Blueprint $table) {
+            $table->string('distance_btw_office')->nullable();
         });
     }
 }

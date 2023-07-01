@@ -58,6 +58,8 @@ Route::resource('/questions', 'QuestionsController');
 Route::resource('/interviewers', 'InterviewsController');
 Route::resource('/categories', 'CategoryController')->middleware('auth');
 Route::resource('/users', 'UserController')->middleware('auth');
+Route::get('/import','QuestionsController@importDataIndex')->middleware('auth');
+Route::post('/importingData','QuestionsController@importData')->middleware('auth');
 });
 
 
