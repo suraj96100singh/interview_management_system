@@ -516,7 +516,7 @@ $(document).ready(function(){ //Make script DOM ready
                     success: function (employee_status_res) {
                         // Swal.fire('Please wait');
                         swal.close(); 
-                        console.log(employee_status_res);
+                        // console.log(employee_status_res);
                         // window.location.href = "/interviewers";
                         var element = document.getElementById('status');
                         var event = new Event('change');

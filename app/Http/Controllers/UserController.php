@@ -73,7 +73,8 @@ class UserController extends Controller
             'user_roles'=>'required',
             // 'user_email'=>'required',
             'user_email' => 'unique:users,email',
-            'user_phone_number'=>'required|digits:10',
+            // 'user_phone_number'=>'required|digits:10',
+            'user_phone_number'=>'required|digits:10|unique:users,system_user_phone',
             'user_password'=>'required',
             'user_experience'=>'required',
             // 'Department_Image'=>'required'
@@ -153,7 +154,9 @@ class UserController extends Controller
         $validator = Validator::make($request->all(),[
                                 'user_name'=>'regex:/^[\pL\s\-]+$/u|max:50',
                                 'user_roles'=>'required',
-                                'user_phone_number'=>'required|digits:10',
+                                // 'user_phone_number'=>'required|digits:10',
+                                'user_phone_number' => 'required|digits:10|unique:users,system_user_phone,' . $id,
+                                // 'user_phone_number'=>'required|digits:10|unique:users,system_user_phone',
                                 'user_experience'=>'required|numeric|between:0,99.99',
                    ]);
                    
